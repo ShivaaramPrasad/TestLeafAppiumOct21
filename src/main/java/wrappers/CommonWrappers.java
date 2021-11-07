@@ -218,9 +218,11 @@ public class CommonWrappers {
 		try {
 			switch (locator) {
 			case "id":
-				return driver.findElement(MobileBy.id(locValue));
+				//return driver.findElement(MobileBy.id(locValue));
+				return driver.findElement(MobileBy.xpath("//*[@id='"+locValue+"']"));
 			case "name":
-				return driver.findElement(MobileBy.name(locValue));
+				//return driver.findElement(MobileBy.name(locValue));
+				return driver.findElement(MobileBy.xpath("//*[@name='"+locValue+"']"));
 			case "className":
 				return driver.findElement(MobileBy.className(locValue));
 			case "link":
