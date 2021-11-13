@@ -33,6 +33,8 @@ public class LoginPage extends GenericWrappers {
 	private WebElement loginBtn;
 
 	public LoginPage enterEmailAddress(String email) {
+//		String platform = driver.getCapabilities().getCapability("platformName").toString();
+//		System.out.println(platform);
 		if (enterValue(emailTxtBox, email)) {
 			reportStep("Username entered successfully", "pass");
 		} else {
