@@ -36,7 +36,7 @@ public class AndroidWrappers extends CommonWrappers {
 
 	public boolean startAnAppUsingActivity(String appPackage, String appActivity) {
 		try {
-			((StartsActivity) driver).startActivity(new Activity(appPackage, appActivity));
+			((StartsActivity) getDriver()).startActivity(new Activity(appPackage, appActivity));
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
@@ -44,16 +44,16 @@ public class AndroidWrappers extends CommonWrappers {
 	}
 
 	public void showNotificationMenu() {
-		((AndroidDriver<WebElement>) driver).openNotifications();
+		((AndroidDriver<WebElement>) getDriver()).openNotifications();
 	}
 
 	public boolean pressEnter() {
-		((PressesKey) driver).pressKey(new KeyEvent(AndroidKey.ENTER));
+		((PressesKey) getDriver()).pressKey(new KeyEvent(AndroidKey.ENTER));
 		return true;
 	}
 
 	public boolean pressBack() {
-		((PressesKey) driver).pressKey(new KeyEvent(AndroidKey.BACK));
+		((PressesKey) getDriver()).pressKey(new KeyEvent(AndroidKey.BACK));
 		return true;
 	}
 
@@ -62,26 +62,27 @@ public class AndroidWrappers extends CommonWrappers {
 	}
 
 	public void toggleLocationServices() {
-		((AndroidDriver<WebElement>) driver).toggleLocationServices();
+		((AndroidDriver<WebElement>) getDriver()).toggleLocationServices();
 	}
 
 	public boolean dataOffInAndroid() {
-		((HasNetworkConnection) driver).setConnection(new ConnectionStateBuilder().withAirplaneModeEnabled().build());
+		((HasNetworkConnection) getDriver())
+				.setConnection(new ConnectionStateBuilder().withAirplaneModeEnabled().build());
 		return true;
 	}
 
 	public boolean dataOnInAndroid() {
-		((HasNetworkConnection) driver).setConnection(new ConnectionStateBuilder().withWiFiEnabled().build());
-		((HasNetworkConnection) driver).setConnection(new ConnectionStateBuilder().withDataEnabled().build());
+		((HasNetworkConnection) getDriver()).setConnection(new ConnectionStateBuilder().withWiFiEnabled().build());
+		((HasNetworkConnection) getDriver()).setConnection(new ConnectionStateBuilder().withDataEnabled().build());
 		return true;
 	}
 
 	public String getCurrentActivity() {
-		return ((StartsActivity) driver).currentActivity();
+		return ((StartsActivity) getDriver()).currentActivity();
 	}
 
 	public boolean deleteChromeCookies() {
-		driver.manage().deleteAllCookies();
+		getDriver().manage().deleteAllCookies();
 		return true;
 	}
 

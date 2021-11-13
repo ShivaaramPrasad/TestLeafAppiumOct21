@@ -36,10 +36,14 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
-import utils.ExtentReporter;
+import io.cucumber.testng.AbstractTestNGCucumberTests;
 
-public class CommonWrappers extends ExtentReporter {
-	public AppiumDriver<WebElement> driver;
+public class CommonWrappers extends AbstractTestNGCucumberTests {
+	public static ThreadLocal<AppiumDriver<WebElement>> driver = new ThreadLocal<AppiumDriver<WebElement>>();
+
+	public static synchronized AppiumDriver<WebElement> getDriver() {
+		return driver.get();
+	}
 
 	public boolean launchApp(String platformName, String deviceName, String udid, String appPackage, String appActivity,
 			String automationName, String chromeDriverPort, String systemPort, String xcodeOrgId, String xcodeSigningId,
@@ -80,13 +84,13 @@ public class CommonWrappers extends ExtentReporter {
 			if (platformName.equalsIgnoreCase("Android")) {
 				// Comment the below line based on need
 				dc.setCapability("autoGrantPermissions", true);
-				driver = new AndroidDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc);
+				driver.set(new AndroidDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc));
 			} else if (platformName.equalsIgnoreCase("iOS")) {
 				// Comment the below line based on need
 				dc.setCapability("autoAcceptAlerts", true);
-				driver = new IOSDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc);
+				driver.set(new IOSDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc));
 			}
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			getDriver().manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -116,17 +120,17 @@ public class CommonWrappers extends ExtentReporter {
 			if (platformName.equalsIgnoreCase("Android")) {
 				// Comment the below line based on need
 				dc.setCapability("autoGrantPermissions", true);
-				driver = new AndroidDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc);
+				driver.set(new AndroidDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc));
 			} else if (platformName.equalsIgnoreCase("iOS")) {
 				// Comment the below line based on need
 				dc.setCapability("autoAcceptAlerts", true);
 				dc.setCapability("startIWDP", true);
 				dc.setCapability("nativeWebTap", true);
 				dc.setCapability("automationName", "XCUITest");
-				driver = new IOSDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc);
+				driver.set(new IOSDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc));
 			}
-			driver.get(URL);
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			getDriver().get(URL);
+			getDriver().manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -136,10 +140,10 @@ public class CommonWrappers extends ExtentReporter {
 	public boolean verifyAndInstallApp(String bundleIdOrAppPackage, String appPath) {
 		boolean bInstallSuccess = false;
 
-		if (driver.isAppInstalled(bundleIdOrAppPackage))
-			driver.removeApp(bundleIdOrAppPackage);
+		if (getDriver().isAppInstalled(bundleIdOrAppPackage))
+			getDriver().removeApp(bundleIdOrAppPackage);
 
-		driver.installApp(appPath);
+		getDriver().installApp(appPath);
 		bInstallSuccess = true;
 
 		return bInstallSuccess;
@@ -155,7 +159,7 @@ public class CommonWrappers extends ExtentReporter {
 
 	public void printContext() {
 		try {
-			Set<String> contexts = driver.getContextHandles();
+			Set<String> contexts = getDriver().getContextHandles();
 			for (String string : contexts) {
 				System.out.println(string);
 			}
@@ -166,7 +170,7 @@ public class CommonWrappers extends ExtentReporter {
 
 	public boolean switchContext(String Context) {
 		try {
-			driver.context(Context);
+			getDriver().context(Context);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -175,10 +179,10 @@ public class CommonWrappers extends ExtentReporter {
 
 	public boolean switchWebview() {
 		try {
-			Set<String> contextNames = driver.getContextHandles();
+			Set<String> contextNames = getDriver().getContextHandles();
 			for (String contextName : contextNames) {
 				if (contextName.contains("WEBVIEW"))
-					driver.context(contextName);
+					getDriver().context(contextName);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,10 +192,10 @@ public class CommonWrappers extends ExtentReporter {
 
 	public boolean switchNativeview() {
 		try {
-			Set<String> contextNames = driver.getContextHandles();
+			Set<String> contextNames = getDriver().getContextHandles();
 			for (String contextName : contextNames) {
 				if (contextName.contains("NATIVE_APP"))
-					driver.context(contextName);
+					getDriver().context(contextName);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -219,25 +223,25 @@ public class CommonWrappers extends ExtentReporter {
 		try {
 			switch (locator) {
 			case "id":
-				// return driver.findElement(MobileBy.id(locValue));
-				return driver.findElement(MobileBy.xpath("//*[@id='" + locValue + "']"));
+				// return getDriver().findElement(MobileBy.id(locValue));
+				return getDriver().findElement(MobileBy.xpath("//*[@id='" + locValue + "']"));
 			case "name":
-				// return driver.findElement(MobileBy.name(locValue));
-				return driver.findElement(MobileBy.xpath("//*[@name='" + locValue + "']"));
+				// return getDriver().findElement(MobileBy.name(locValue));
+				return getDriver().findElement(MobileBy.xpath("//*[@name='" + locValue + "']"));
 			case "className":
-				return driver.findElement(MobileBy.className(locValue));
+				return getDriver().findElement(MobileBy.className(locValue));
 			case "link":
-				return driver.findElement(MobileBy.linkText(locValue));
+				return getDriver().findElement(MobileBy.linkText(locValue));
 			case "partialLink":
-				return driver.findElement(MobileBy.partialLinkText(locValue));
+				return getDriver().findElement(MobileBy.partialLinkText(locValue));
 			case "tag":
-				return driver.findElement(MobileBy.tagName(locValue));
+				return getDriver().findElement(MobileBy.tagName(locValue));
 			case "css":
-				return driver.findElement(MobileBy.cssSelector(locValue));
+				return getDriver().findElement(MobileBy.cssSelector(locValue));
 			case "xpath":
-				return driver.findElement(MobileBy.xpath(locValue));
+				return getDriver().findElement(MobileBy.xpath(locValue));
 			case "accessibilityId":
-				return driver.findElement(MobileBy.AccessibilityId(locValue));
+				return getDriver().findElement(MobileBy.AccessibilityId(locValue));
 			}
 		} catch (Exception e) {
 
@@ -248,7 +252,7 @@ public class CommonWrappers extends ExtentReporter {
 	public long takeScreenShot() {
 		long number = (long) Math.floor(Math.random() * 900000000L) + 10000000L;
 		try {
-			File srcFiler = driver.getScreenshotAs(OutputType.FILE);
+			File srcFiler = getDriver().getScreenshotAs(OutputType.FILE);
 			FileUtils.copyFile(srcFiler, new File("./reports/images/" + number + ".png"));
 		} catch (WebDriverException e) {
 			e.printStackTrace();
@@ -271,7 +275,7 @@ public class CommonWrappers extends ExtentReporter {
 	public boolean verifyText(WebElement ele, String Expected) {
 		boolean val = false;
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 30);
+			WebDriverWait wait = new WebDriverWait(getDriver(), 30);
 			wait.until(ExpectedConditions.visibilityOf(ele));
 			String name = ele.getText();
 			if (name.equals(Expected)) {
@@ -298,7 +302,7 @@ public class CommonWrappers extends ExtentReporter {
 	// Applicable only for Mobile Web/Browser
 	public boolean navigateBackInBrowser() {
 		try {
-			driver.navigate().back();
+			getDriver().navigate().back();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -308,9 +312,9 @@ public class CommonWrappers extends ExtentReporter {
 	private boolean scrollUsingTouchActions(int startX, int startY, int endX, int endY) {
 		try {
 //			new TouchAction<>(driver).press(PointOption.point(startX, startY)).waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2))).moveTo(PointOption.point(endX, endY)).release().perform();
-			new MultiTouchAction(driver).add(new TouchAction<>(driver).press(PointOption.point(startX, startY))
-					.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2))).moveTo(PointOption.point(endX, endY))
-					.release()).perform();
+			new MultiTouchAction(getDriver()).add(new TouchAction<>(getDriver())
+					.press(PointOption.point(startX, startY)).waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
+					.moveTo(PointOption.point(endX, endY)).release()).perform();
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -328,7 +332,7 @@ public class CommonWrappers extends ExtentReporter {
 			sequence.addAction(
 					finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(), endX, endY));
 			sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-			driver.perform(Arrays.asList(sequence));
+			getDriver().perform(Arrays.asList(sequence));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -336,8 +340,8 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public void doubleTapUsingTouchActions(int x, int y) {
-		MultiTouchAction touch = new MultiTouchAction(driver);
-		touch.add(new TouchAction<>(driver).press(PointOption.point(x, y)).release()
+		MultiTouchAction touch = new MultiTouchAction(getDriver());
+		touch.add(new TouchAction<>(getDriver()).press(PointOption.point(x, y)).release()
 				.waitAction(WaitOptions.waitOptions(Duration.ofMillis(200))).press(PointOption.point(x, y)).release())
 				.perform();
 
@@ -354,7 +358,7 @@ public class CommonWrappers extends ExtentReporter {
 		doubleTap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		doubleTap.addAction(new Pause(finger, Duration.ofMillis(200)));
 		doubleTap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-		driver.perform(Arrays.asList(doubleTap));
+		getDriver().perform(Arrays.asList(doubleTap));
 	}
 
 	public void pinchUsingPointerInput() {
@@ -362,7 +366,7 @@ public class CommonWrappers extends ExtentReporter {
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
 		PointerInput finger2 = new PointerInput(PointerInput.Kind.TOUCH, "finger2");
 
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		Point source = new Point(size.getWidth(), size.getHeight());
 
 		Sequence pinch = new Sequence(finger, 1);
@@ -383,16 +387,16 @@ public class CommonWrappers extends ExtentReporter {
 				source.y / 2));
 		pinch2.addAction(finger2.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
-		driver.perform(Arrays.asList(pinch, pinch2));
+		getDriver().perform(Arrays.asList(pinch, pinch2));
 	}
 
 	// Pinch using Touch Action will not work. Known Bug.
 	public void pinchUsingTouchActions() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		Point source = new Point(size.getWidth(), size.getHeight());
-		MultiTouchAction multiTouch = new MultiTouchAction(driver);
-		TouchAction<?> tAction0 = new TouchAction<>(driver);
-		TouchAction<?> tAction1 = new TouchAction<>(driver);
+		MultiTouchAction multiTouch = new MultiTouchAction(getDriver());
+		TouchAction<?> tAction0 = new TouchAction<>(getDriver());
+		TouchAction<?> tAction1 = new TouchAction<>(getDriver());
 		tAction0.press(PointOption.point(source.x / 3, source.y / 3))
 				.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
 				.moveTo(PointOption.point(source.x / 2, source.y / 2)).release();
@@ -407,7 +411,7 @@ public class CommonWrappers extends ExtentReporter {
 		PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
 		PointerInput finger2 = new PointerInput(PointerInput.Kind.TOUCH, "finger2");
 
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		Point source = new Point(size.getWidth(), size.getHeight());
 
 		Sequence zoom = new Sequence(finger, 1);
@@ -428,16 +432,16 @@ public class CommonWrappers extends ExtentReporter {
 				source.x * 3 / 4, source.y * 3 / 4));
 		zoom2.addAction(finger2.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
-		driver.perform(Arrays.asList(zoom, zoom2));
+		getDriver().perform(Arrays.asList(zoom, zoom2));
 	}
 
 	// Zoom using Touch Action will not work. Known Bug.
 	public void zoomUsingTouchActions() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		Point source = new Point(size.getWidth(), size.getHeight());
-		MultiTouchAction multiTouch = new MultiTouchAction(driver);
-		TouchAction<?> tAction0 = new TouchAction<>(driver);
-		TouchAction<?> tAction1 = new TouchAction<>(driver);
+		MultiTouchAction multiTouch = new MultiTouchAction(getDriver());
+		TouchAction<?> tAction0 = new TouchAction<>(getDriver());
+		TouchAction<?> tAction1 = new TouchAction<>(getDriver());
 		tAction0.press(PointOption.point(source.x / 2, source.y / 2))
 				.waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
 				.moveTo(PointOption.point(source.x / 3, source.y / 3)).release();
@@ -448,7 +452,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeUpInAppUsingTouchActions() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.5);
 		int startY = (int) (size.getHeight() * 0.8);
 		int endX = (int) (size.getWidth() * 0.5);
@@ -457,7 +461,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeUpinAppUsingPointerInput() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.5);
 		int startY = (int) (size.getHeight() * 0.8);
 		int endX = (int) (size.getWidth() * 0.5);
@@ -466,7 +470,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeDownInAppUsingTouchActions() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.5);
 		int startY = (int) (size.getHeight() * 0.2);
 		int endX = (int) (size.getWidth() * 0.5);
@@ -476,7 +480,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeDownInAppUsingPointerInput() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.5);
 		int startY = (int) (size.getHeight() * 0.2);
 		int endX = (int) (size.getWidth() * 0.5);
@@ -485,7 +489,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeLeftInAppUsingPointerInput() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.8);
 		int startY = (int) (size.getHeight() * 0.5);
 		int endX = (int) (size.getWidth() * 0.2);
@@ -494,7 +498,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeLeftInAppUsingTouchActions() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.8);
 		int startY = (int) (size.getHeight() * 0.5);
 		int endX = (int) (size.getWidth() * 0.2);
@@ -503,7 +507,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeRightInAppUsingPointerInput() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.2);
 		int startY = (int) (size.getHeight() * 0.5);
 		int endX = (int) (size.getWidth() * 0.8);
@@ -512,7 +516,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean swipeRightInAppUsingTouchActions() {
-		Dimension size = driver.manage().window().getSize();
+		Dimension size = getDriver().manage().window().getSize();
 		int startX = (int) (size.getWidth() * 0.2);
 		int startY = (int) (size.getHeight() * 0.5);
 		int endX = (int) (size.getWidth() * 0.8);
@@ -640,7 +644,7 @@ public class CommonWrappers extends ExtentReporter {
 
 	public boolean clickInCoOrdinatesOfApp(int x, int y) {
 		try {
-			new TouchAction<>(driver).press(PointOption.point(x, y)).release().perform();
+			new TouchAction<>(getDriver()).press(PointOption.point(x, y)).release().perform();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -648,7 +652,7 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public boolean pullFile(String phonePath, String destinationPath) {
-		byte[] data = driver.pullFile(phonePath);
+		byte[] data = getDriver().pullFile(phonePath);
 		Path path = Paths.get(destinationPath);
 		try {
 			Files.write(path, data);
@@ -659,40 +663,40 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public void resetApp() {
-		driver.resetApp();
+		getDriver().resetApp();
 	}
 
 	public void closeApp() {
 		if (driver != null) {
 			try {
-				driver.closeApp();
+				getDriver().closeApp();
 			} catch (Exception e) {
 			}
 		}
 	}
 
 	public boolean setPortraitOrientation() {
-		driver.rotate(ScreenOrientation.PORTRAIT);
+		getDriver().rotate(ScreenOrientation.PORTRAIT);
 		return true;
 	}
 
 	public boolean setLanscapeOrientation() {
-		driver.rotate(ScreenOrientation.LANDSCAPE);
+		getDriver().rotate(ScreenOrientation.LANDSCAPE);
 		return true;
 	}
 
 	public void hideKeyboard() {
 		// ((IOSDriver) driver).hideKeyboard(HideKeyboardStrategy.PRESS_KEY,"Done");
-		driver.hideKeyboard();
+		getDriver().hideKeyboard();
 
 	}
 
 	public String getOrientation() {
-		return driver.getOrientation().toString();
+		return getDriver().getOrientation().toString();
 	}
 
 	public boolean enterValue(WebElement ele, String data) {
-		WebDriverWait wait = new WebDriverWait(driver, 30);
+		WebDriverWait wait = new WebDriverWait(getDriver(), 30);
 		wait.until(ExpectedConditions.elementToBeClickable(ele));
 		ele.clear();
 		ele.sendKeys(data);
@@ -701,7 +705,7 @@ public class CommonWrappers extends ExtentReporter {
 
 	public boolean click(WebElement ele) {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 30);
+			WebDriverWait wait = new WebDriverWait(getDriver(), 30);
 			wait.until(ExpectedConditions.elementToBeClickable(ele)).click();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -711,22 +715,22 @@ public class CommonWrappers extends ExtentReporter {
 	}
 
 	public String getText(WebElement ele) {
-		WebDriverWait wait = new WebDriverWait(driver, 30);
+		WebDriverWait wait = new WebDriverWait(getDriver(), 30);
 		wait.until(ExpectedConditions.visibilityOf(ele));
 		return ele.getText();
 	}
 
 	public boolean loadURL(String URL) {
-		driver.get(URL);
+		getDriver().get(URL);
 		return true;
 	}
 
 	// Only for Web browser
 	public boolean switchToLastWindow() {
 		sleep(5000);
-		Set<String> windowHandles = driver.getWindowHandles();
+		Set<String> windowHandles = getDriver().getWindowHandles();
 		for (String string : windowHandles) {
-			driver.switchTo().window(string);
+			getDriver().switchTo().window(string);
 		}
 		return true;
 	}
@@ -734,19 +738,19 @@ public class CommonWrappers extends ExtentReporter {
 	// Only for Web browser
 	public boolean switchToFirstWindow() {
 		sleep(5000);
-		Set<String> windowHandles = driver.getWindowHandles();
+		Set<String> windowHandles = getDriver().getWindowHandles();
 		for (String string : windowHandles) {
-			driver.switchTo().window(string);
+			getDriver().switchTo().window(string);
 			break;
 		}
 		return true;
 	}
 
 	public void switchToAnotherApp(String bundleIdOrAppPackage) {
-		driver.activateApp(bundleIdOrAppPackage);
+		getDriver().activateApp(bundleIdOrAppPackage);
 	}
 
 	public void stopRunningApp(String bundleIdOrAppPackage) {
-		driver.terminateApp(bundleIdOrAppPackage);
+		getDriver().terminateApp(bundleIdOrAppPackage);
 	}
 }

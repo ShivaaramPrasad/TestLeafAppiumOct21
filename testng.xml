@@ -2,13 +2,13 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Suite" verbose="5">
 <parameter name="platformName" value="Android"></parameter>
-<parameter name="deviceName" value="my android emulator"></parameter>
+<parameter name="deviceName" value="my android emu"></parameter>
 <parameter name="appPackage" value="com.testleaf.leaforg"></parameter>
 <parameter name="appActivity" value="com.testleaf.leaforg.MainActivity"></parameter>
 <parameter name="app" value="\apks\leaforg.apk"></parameter>
   <test thread-count="5" name="Test">
     <classes>
-      <class name="testCases.LoginTC"/>
+      <class name="runner.TestRunner"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
