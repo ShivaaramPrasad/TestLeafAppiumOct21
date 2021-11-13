@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Suite" parallel="tests" thread-count="2" verbose="5">
+	<test thread-count="5" name="Test">
+		<parameter name="platformName" value="Android"></parameter>
+		<parameter name="deviceName" value="my android emulator 1"></parameter>
+		<parameter name="appPackage" value="com.testleaf.leaforg"></parameter>
+		<parameter name="appActivity"
+			value="com.testleaf.leaforg.MainActivity"></parameter>
+		<parameter name="app" value="\apks\leaforg.apk"></parameter>
+		<parameter name="udid" value="emulator-5556"></parameter>
+		<parameter name="systemPort" value="8907"></parameter>
+		<parameter name="mjpegServerPort" value="8900"></parameter>
+		<classes>
+			<class name="testCases.LoginTC" />
+		</classes>
+	</test> <!-- Test -->
+
+	<test thread-count="5" name="Test1">
+		<parameter name="platformName" value="Android"></parameter>
+		<parameter name="deviceName" value="my android emulator 2"></parameter>
+		<parameter name="appPackage" value="com.testleaf.leaforg"></parameter>
+		<parameter name="appActivity"
+			value="com.testleaf.leaforg.MainActivity"></parameter>
+		<parameter name="app" value="\apks\leaforg.apk"></parameter>
+		<parameter name="udid" value="emulator-5554"></parameter>
+		<parameter name="systemPort" value="8967"></parameter>
+		<parameter name="mjpegServerPort" value="8910"></parameter>
+		<classes>
+			<class name="testCases.LoginTC" />
+		</classes>
+	</test> <!-- Test -->
+</suite> <!-- Suite -->

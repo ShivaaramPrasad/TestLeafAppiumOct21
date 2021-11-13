@@ -29,7 +29,8 @@ public class AndroidWrappers extends CommonWrappers {
 		return launchBrowser("Android", "Chrome", deviceName, URL, "", "", "", "");
 	}
 
-	public boolean launchChromeBrowserInParallel(String deviceName, String URL, String udid, String chromeDriverPort, String mjpegServerPort) {
+	public boolean launchChromeBrowserInParallel(String deviceName, String URL, String udid, String chromeDriverPort,
+			String mjpegServerPort) {
 		return launchBrowser("Android", "Chrome", deviceName, URL, udid, chromeDriverPort, "", mjpegServerPort);
 	}
 

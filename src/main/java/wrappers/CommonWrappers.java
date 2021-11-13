@@ -36,8 +36,9 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import utils.ExtentReporter;
 
-public class CommonWrappers {
+public class CommonWrappers extends ExtentReporter {
 	public AppiumDriver<WebElement> driver;
 
 	public boolean launchApp(String platformName, String deviceName, String udid, String appPackage, String appActivity,
@@ -50,7 +51,7 @@ public class CommonWrappers {
 			if (!udid.equals(""))
 				dc.setCapability("udid", udid);
 			if (!app.equals(""))
-				dc.setCapability("app", app);
+				dc.setCapability("app", System.getProperty("user.dir") + app);
 			// Android
 			if (!appPackage.equals(""))
 				dc.setCapability("appPackage", appPackage);
@@ -218,11 +219,11 @@ public class CommonWrappers {
 		try {
 			switch (locator) {
 			case "id":
-				//return driver.findElement(MobileBy.id(locValue));
-				return driver.findElement(MobileBy.xpath("//*[@id='"+locValue+"']"));
+				// return driver.findElement(MobileBy.id(locValue));
+				return driver.findElement(MobileBy.xpath("//*[@id='" + locValue + "']"));
 			case "name":
-				//return driver.findElement(MobileBy.name(locValue));
-				return driver.findElement(MobileBy.xpath("//*[@name='"+locValue+"']"));
+				// return driver.findElement(MobileBy.name(locValue));
+				return driver.findElement(MobileBy.xpath("//*[@name='" + locValue + "']"));
 			case "className":
 				return driver.findElement(MobileBy.className(locValue));
 			case "link":
@@ -365,12 +366,12 @@ public class CommonWrappers {
 		Point source = new Point(size.getWidth(), size.getHeight());
 
 		Sequence pinch = new Sequence(finger, 1);
-		pinch.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(),
-				source.x / 3, source.y / 3));
+		pinch.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), source.x / 3,
+				source.y / 3));
 		pinch.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		pinch.addAction(new Pause(finger, Duration.ofMillis(100)));
-		pinch.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		pinch.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		pinch.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		Sequence pinch2 = new Sequence(finger2, 1);
@@ -378,8 +379,8 @@ public class CommonWrappers {
 				source.x * 3 / 4, source.y * 3 / 4));
 		pinch2.addAction(finger2.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		pinch2.addAction(new Pause(finger, Duration.ofMillis(100)));
-		pinch2.addAction(finger2.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		pinch2.addAction(finger2.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		pinch2.addAction(finger2.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		driver.perform(Arrays.asList(pinch, pinch2));
@@ -410,17 +411,17 @@ public class CommonWrappers {
 		Point source = new Point(size.getWidth(), size.getHeight());
 
 		Sequence zoom = new Sequence(finger, 1);
-		zoom.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		zoom.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		zoom.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		zoom.addAction(new Pause(finger, Duration.ofMillis(100)));
-		zoom.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
-				source.x / 3, source.y / 3));
+		zoom.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(), source.x / 3,
+				source.y / 3));
 		zoom.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		Sequence zoom2 = new Sequence(finger2, 1);
-		zoom2.addAction(finger2.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		zoom2.addAction(finger2.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		zoom2.addAction(finger2.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		zoom2.addAction(new Pause(finger, Duration.ofMillis(100)));
 		zoom2.addAction(finger2.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
@@ -726,6 +727,17 @@ public class CommonWrappers {
 		Set<String> windowHandles = driver.getWindowHandles();
 		for (String string : windowHandles) {
 			driver.switchTo().window(string);
+		}
+		return true;
+	}
+
+	// Only for Web browser
+	public boolean switchToFirstWindow() {
+		sleep(5000);
+		Set<String> windowHandles = driver.getWindowHandles();
+		for (String string : windowHandles) {
+			driver.switchTo().window(string);
+			break;
 		}
 		return true;
 	}
