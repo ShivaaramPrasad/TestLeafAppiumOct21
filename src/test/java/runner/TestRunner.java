@@ -7,10 +7,11 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
 import io.cucumber.testng.CucumberOptions;
+import io.cucumber.testng.CucumberOptions.SnippetType;
 import wrappers.GenericWrappers;
 
 @CucumberOptions(features = "src/test/resources/features", glue = { "pages",
-		"hooks" }, monochrome = true, publish = true)
+		"hooks" }, monochrome = true, publish = true,snippets = SnippetType.CAMELCASE)
 
 public class TestRunner extends GenericWrappers {
 	@Override
