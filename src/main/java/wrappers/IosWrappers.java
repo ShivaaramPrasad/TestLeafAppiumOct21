@@ -18,11 +18,12 @@ public class IosWrappers extends AndroidWrappers {
 	}
 
 	public boolean launchSafariBrowser(String deviceName, String URL, String udid) {
-		return launchBrowser("iOS", "Safari", deviceName, URL, udid, "", "","");
+		return launchBrowser("iOS", "Safari", deviceName, URL, udid, "", "", "", "");
 	}
 
-	public boolean launchSafariBrowserInParallel(String deviceName, String URL, String udid, String wdaLocalPort) {
-		return launchBrowser("iOS", "Safari", deviceName, URL, udid, "", wdaLocalPort,"");
+	public boolean launchSafariBrowserInParallel(String deviceName, String URL, String udid, String wdaLocalPort,
+			String webkitDebugProxyPort) {
+		return launchBrowser("iOS", "Safari", deviceName, URL, udid, "", wdaLocalPort, "", webkitDebugProxyPort);
 	}
 
 	public boolean deleteSafariCookies() {
@@ -42,14 +43,13 @@ public class IosWrappers extends AndroidWrappers {
 				"//*[@value='Clear History and Website Data' and @visible='true']");
 		click(getWebElement(Locators.XPATH.toString(),
 				"//*[@value='Clear History and Website Data' and @visible='true']"));
-		click(getWebElement(Locators.XPATH.toString(),
-				"//*[@label='Clear' or @label='Clear History and Data']"));
+		click(getWebElement(Locators.XPATH.toString(), "//*[@label='Clear' or @label='Clear History and Data']"));
 		stopRunningApp("com.apple.Preferences");
 		switchToAnotherApp("com.apple.mobilesafari");
 		switchWebview();
 		return true;
 	}
-	
+
 	public boolean chooseNextOptionInPickerWheel(String locator, String locatorValue) {
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("order", "next");
@@ -58,7 +58,7 @@ public class IosWrappers extends AndroidWrappers {
 		driver.executeScript("mobile: selectPickerWheelValue", params);
 		return true;
 	}
-	
+
 	public boolean chooseNextOptionInPickerWheel(WebElement ele) {
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("order", "next");
@@ -67,7 +67,7 @@ public class IosWrappers extends AndroidWrappers {
 		driver.executeScript("mobile: selectPickerWheelValue", params);
 		return true;
 	}
-	
+
 	public boolean choosePreviousOptionInPickerWheel(String locator, String locatorValue) {
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("order", "previous");
@@ -76,7 +76,7 @@ public class IosWrappers extends AndroidWrappers {
 		driver.executeScript("mobile: selectPickerWheelValue", params);
 		return true;
 	}
-	
+
 	public boolean choosePreviousOptionInPickerWheel(WebElement ele) {
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("order", "previous");

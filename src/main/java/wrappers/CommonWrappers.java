@@ -93,7 +93,7 @@ public class CommonWrappers {
 	}
 
 	public boolean launchBrowser(String platformName, String browserName, String deviceName, String URL, String udid,
-			String chromeDriverPort, String wdaLocalPort, String mjpegServerPort) {
+			String chromeDriverPort, String wdaLocalPort, String mjpegServerPort, String webkitDebugProxyPort) {
 		try {
 			DesiredCapabilities dc = new DesiredCapabilities();
 			if (!udid.equals(""))
@@ -117,6 +117,8 @@ public class CommonWrappers {
 				dc.setCapability("autoGrantPermissions", true);
 				driver = new AndroidDriver<WebElement>(new URL("http://0.0.0.0:4723/wd/hub"), dc);
 			} else if (platformName.equalsIgnoreCase("iOS")) {
+				if (!webkitDebugProxyPort.equals(""))
+					dc.setCapability("webkitDebugProxyPort", webkitDebugProxyPort);
 				// Comment the below line based on need
 				dc.setCapability("autoAcceptAlerts", true);
 				dc.setCapability("startIWDP", true);
@@ -218,11 +220,11 @@ public class CommonWrappers {
 		try {
 			switch (locator) {
 			case "id":
-				//return driver.findElement(MobileBy.id(locValue));
-				return driver.findElement(MobileBy.xpath("//*[@id='"+locValue+"']"));
+				// return driver.findElement(MobileBy.id(locValue));
+				return driver.findElement(MobileBy.xpath("//*[@id='" + locValue + "']"));
 			case "name":
-				//return driver.findElement(MobileBy.name(locValue));
-				return driver.findElement(MobileBy.xpath("//*[@name='"+locValue+"']"));
+				// return driver.findElement(MobileBy.name(locValue));
+				return driver.findElement(MobileBy.xpath("//*[@name='" + locValue + "']"));
 			case "className":
 				return driver.findElement(MobileBy.className(locValue));
 			case "link":
@@ -365,12 +367,12 @@ public class CommonWrappers {
 		Point source = new Point(size.getWidth(), size.getHeight());
 
 		Sequence pinch = new Sequence(finger, 1);
-		pinch.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(),
-				source.x / 3, source.y / 3));
+		pinch.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), source.x / 3,
+				source.y / 3));
 		pinch.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		pinch.addAction(new Pause(finger, Duration.ofMillis(100)));
-		pinch.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		pinch.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		pinch.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		Sequence pinch2 = new Sequence(finger2, 1);
@@ -378,8 +380,8 @@ public class CommonWrappers {
 				source.x * 3 / 4, source.y * 3 / 4));
 		pinch2.addAction(finger2.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		pinch2.addAction(new Pause(finger, Duration.ofMillis(100)));
-		pinch2.addAction(finger2.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		pinch2.addAction(finger2.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		pinch2.addAction(finger2.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		driver.perform(Arrays.asList(pinch, pinch2));
@@ -410,17 +412,17 @@ public class CommonWrappers {
 		Point source = new Point(size.getWidth(), size.getHeight());
 
 		Sequence zoom = new Sequence(finger, 1);
-		zoom.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		zoom.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		zoom.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		zoom.addAction(new Pause(finger, Duration.ofMillis(100)));
-		zoom.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
-				source.x / 3, source.y / 3));
+		zoom.addAction(finger.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(), source.x / 3,
+				source.y / 3));
 		zoom.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
 		Sequence zoom2 = new Sequence(finger2, 1);
-		zoom2.addAction(finger2.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(),
-				source.x / 2, source.y / 2));
+		zoom2.addAction(finger2.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), source.x / 2,
+				source.y / 2));
 		zoom2.addAction(finger2.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 		zoom2.addAction(new Pause(finger, Duration.ofMillis(100)));
 		zoom2.addAction(finger2.createPointerMove(Duration.ofSeconds(2), PointerInput.Origin.viewport(),
