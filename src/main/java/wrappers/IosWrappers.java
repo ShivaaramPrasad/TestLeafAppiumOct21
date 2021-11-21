@@ -62,7 +62,7 @@ public class IosWrappers extends AndroidWrappers {
 	public boolean chooseNextOptionInPickerWheel(WebElement ele) {
 		HashMap<String, Object> params = new HashMap<>();
 		params.put("order", "next");
-		params.put("offset", 0.15);
+		params.put("offset", 0.18);
 		params.put("element", ele);
 		driver.executeScript("mobile: selectPickerWheelValue", params);
 		return true;
